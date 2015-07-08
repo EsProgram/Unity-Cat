@@ -1,0 +1,3 @@
+[submodule "Assets/Unity-TouchManager"]
+	path = Assets/Unity-TouchManager
+	url = https://github.com/EsProgram/Unity-TouchManager
