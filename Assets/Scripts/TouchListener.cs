@@ -3,12 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Extension;
 
+/// <summary>
+/// タッチ入力に応じた処理のイベントを提供する
+/// </summary>
 public class TouchListener : SingletonMonoBehaviour<TouchListener>
 {
+  GameObject touchObject;
 
-  bool touchPlayer;
-
+  /// <summary>
+  /// 現在タッチしているオブジェクト
+  /// </summary>
+  public GameObject TouchObject { get { return touchObject; } }
 
   public void Awake()
   {
@@ -22,17 +29,10 @@ public class TouchListener : SingletonMonoBehaviour<TouchListener>
   /// </summary>
   void OnTouchStart(object sender, CustomInputEventArgs args)
   {
-    //タッチした位置にタグ名がPlayerのオブジェクトがあればそれを取得する
-    var playerHit = Physics.RaycastAll(Camera.main.ScreenPointToRay(args.Input.ScreenPosition))
-      .FirstOrDefault(hit => { return hit.collider.gameObject.tag == "Player"; });
-
-    //プレイヤーのゲームオブジェクトを取得
-    var player = playerHit.collider != null ? playerHit.collider.gameObject : null;
-
-    //何かしらの処理
-    if(player != null)
-      touchPlayer = true;
-    
+    //最初にヒットしたオブジェクトを取得する
+    RaycastHit hit;
+    if(Physics.Raycast(Camera.main.ScreenPointToRay(args.Input.ScreenPosition), out hit))
+      touchObject = hit.collider.gameObject;
   }
 
   /// <summary>
@@ -40,10 +40,8 @@ public class TouchListener : SingletonMonoBehaviour<TouchListener>
   /// </summary>
   void OnDrag(object sender, CustomInputEventArgs args)
   {
-    if(touchPlayer)
-    {
-      Debug.Log("Drag");
-    }
+    if(touchObject != null)
+      touchObject.transform.Translate(args.Input.DeltaPosition.TransYZ() * args.Input.DeltaTime);
   }
 
   /// <summary>
@@ -51,7 +49,7 @@ public class TouchListener : SingletonMonoBehaviour<TouchListener>
   /// </summary>
   void OnTouchEnd(object sender, CustomInputEventArgs args)
   {
-    touchPlayer = false;
+    touchObject = null;
   }
 
 
