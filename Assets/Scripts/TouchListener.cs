@@ -10,6 +10,10 @@ using Extension;
 /// </summary>
 public class TouchListener : SingletonMonoBehaviour<TouchListener>
 {
+  /// <summary>
+  /// オブジェクトクリック時のイベント処理
+  /// </summary>
+  public event EventHandler<EventArgs> ClickEvent;
   GameObject touchObject;
 
   /// <summary>
@@ -20,7 +24,6 @@ public class TouchListener : SingletonMonoBehaviour<TouchListener>
   public void Awake()
   {
     TouchManager.Instance.TouchStart += OnTouchStart;
-    TouchManager.Instance.Drag += OnDrag;
     TouchManager.Instance.TouchEnd += OnTouchEnd;
   }
 
@@ -36,21 +39,15 @@ public class TouchListener : SingletonMonoBehaviour<TouchListener>
   }
 
   /// <summary>
-  /// ドラッグ時のイベント
-  /// </summary>
-  void OnDrag(object sender, CustomInputEventArgs args)
-  {
-    if(touchObject != null)
-      touchObject.transform.Translate(args.Input.DeltaPosition.TransYZ() * args.Input.DeltaTime);
-  }
-
-  /// <summary>
   /// リリース時のイベント
   /// </summary>
   void OnTouchEnd(object sender, CustomInputEventArgs args)
   {
-    touchObject = null;
+
+    RaycastHit hit;
+    if(Physics.Raycast(Camera.main.ScreenPointToRay(args.Input.ScreenPosition), out hit))
+      if(GameObject.ReferenceEquals(hit.collider.gameObject, touchObject))
+        if(ClickEvent != null)
+          ClickEvent(sender, args);
   }
-
-
 }
