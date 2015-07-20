@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-[RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(NavMeshAgent), typeof(Animator))]
 public class UnitychanActionControl : MonoBehaviour
 {
   private NavMeshAgent agent;
@@ -23,15 +23,19 @@ public class UnitychanActionControl : MonoBehaviour
     switch(TouchListener.Instance.TouchObject.tag)
     {
       case "Ground":
+        //タッチした位置に移動
         agent.SetDestination(TouchListener.Instance.HitPoint);
         break;
+
       case "Treasure":
-        Debug.Log("Treasure");
+        //距離が一定値以内であれば宝箱を開ける
+        //TODO:距離一定値条件と回転動作を加える
+        TouchListener.Instance.TouchObject.GetComponent<TreasureBoxControl>().Open();
         break;
+
       default:
         break;
     }
-
   }
 
   /// <summary>
