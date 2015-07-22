@@ -10,4 +10,9 @@ public class Gold : Item
   {
     base.Get();
   }
+
+  protected override void AnimationEnd()
+  {
+    Destroy(gameObject);
+  }
 }
