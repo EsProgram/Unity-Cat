@@ -3,10 +3,18 @@
 [RequireComponent(typeof(NavMeshAgent), typeof(Animator))]
 public class UnitychanActionControl : MonoBehaviour
 {
+  public bool AllowClickEvent { get; set; }
+
   private NavMeshAgent agent;
   private Animator anim;
   //走り判定のベクトルの大きさ
   private const float RUN_DECISION = 0.3f;
+
+
+  public UnitychanActionControl()
+  {
+    AllowClickEvent = true;
+  }
 
   public void Awake()
   {
@@ -20,6 +28,9 @@ public class UnitychanActionControl : MonoBehaviour
   /// </summary>
   private void Instance_ClickEvent(object sender, CustomInputEventArgs e)
   {
+    if(!AllowClickEvent)
+      return;
+
     var animState = anim.GetCurrentAnimatorStateInfo(0);
     switch(TouchListener.Instance.TouchObject.tag)
     {

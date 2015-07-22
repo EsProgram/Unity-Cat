@@ -32,7 +32,6 @@ public class TreasureBoxControl : MonoBehaviour
       alreadyOpend = true;
       if(treasureItem != null)
       {
-        Debug.Log("GET ITEM");
         var item = Instantiate<GameObject>(treasureItem);
         return item.GetComponent<Item>();
       }
