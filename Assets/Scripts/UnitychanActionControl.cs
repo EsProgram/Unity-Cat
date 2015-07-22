@@ -20,17 +20,33 @@ public class UnitychanActionControl : MonoBehaviour
   /// </summary>
   private void Instance_ClickEvent(object sender, CustomInputEventArgs e)
   {
+    var animState = anim.GetCurrentAnimatorStateInfo(0);
     switch(TouchListener.Instance.TouchObject.tag)
     {
       case "Ground":
         //タッチした位置に移動
-        agent.SetDestination(TouchListener.Instance.HitPoint);
+        if(animState.IsName("Standing@loop") || animState.IsName("Running@loop"))
+          agent.SetDestination(TouchListener.Instance.HitPoint);
         break;
 
       case "Treasure":
         //距離が一定値以内であれば宝箱を開ける
         //TODO:距離一定値条件と回転動作を加える
-        TouchListener.Instance.TouchObject.GetComponent<TreasureBoxControl>().Open();
+        if(animState.IsName("Standing@loop"))
+        {
+          var item = TouchListener.Instance.TouchObject.GetComponent<TreasureBoxControl>().Open();
+
+          //アイテム取得処理
+          if(item != null)
+          {
+            anim.SetTrigger("Glad");
+            item.Get();
+          }
+        }
+        break;
+      case "UnityChan":
+        if(animState.IsName("Standing@loop"))
+          anim.SetTrigger("Touch");
         break;
 
       default:
