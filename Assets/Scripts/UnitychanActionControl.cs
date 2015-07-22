@@ -1,4 +1,8 @@
 ﻿using UnityEngine;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 [RequireComponent(typeof(NavMeshAgent), typeof(Animator))]
 public class UnitychanActionControl : MonoBehaviour
@@ -42,16 +46,29 @@ public class UnitychanActionControl : MonoBehaviour
 
       case "Treasure":
         //距離が一定値以内であれば宝箱を開ける
-        //TODO:距離一定値条件と回転動作を加える
         if(animState.IsName("Standing@loop"))
         {
-          var item = TouchListener.Instance.TouchObject.GetComponent<TreasureBoxControl>().Open();
-
-          //アイテム取得処理
-          if(item != null)
+          RaycastHit hit;
+          //宝の方向を向いていればGETする
+          if(Physics.Linecast(transform.position, transform.position + transform.forward, out hit))
           {
-            anim.SetTrigger("Glad");
-            item.Get();
+            if(hit.collider.tag == "Treasure")
+            {
+              var item = TouchListener.Instance.TouchObject.GetComponent<TreasureBoxControl>().Open();
+
+              //アイテム取得処理
+              if(item != null)
+              {
+                anim.SetTrigger("Glad");
+                item.Get();
+              }
+            }
+          }
+          //向いていなければ宝の方向を向く
+          else
+          {
+            //TODO:宝の方向を向く
+            transform.LookAt(TouchListener.Instance.TouchObject.transform);
           }
         }
         break;
@@ -75,6 +92,9 @@ public class UnitychanActionControl : MonoBehaviour
     else
       anim.SetBool("Run", false);
   }
+
+
+
 
   public void Update()
   {

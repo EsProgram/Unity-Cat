@@ -39,8 +39,6 @@ public abstract class Item : MonoBehaviour, IItem
   /// </summary>
   private IEnumerator GetAnimation()
   {
-    Debug.Log("GET ANIMATION START");
-
     var startPosY = transform.position.y;
     var materials = new List<Material>();
 
