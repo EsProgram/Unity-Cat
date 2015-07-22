@@ -7,11 +7,14 @@ using UnityEngine;
 public abstract class Item : MonoBehaviour, IItem
 {
   //アニメーションでどのくらい上に上がるか
-  const float HIGHT = 0.5f;
+  const float HIGHT = 1.2f;
   //アニメーションで上昇していく速度
-  const float UP_SPEED = 0.5f;
+  const float UP_SPEED = 0.6f;
   //アニメーションで透過する速度
   const float ALPHA_SPEED = 0.05f;
+  //アニメーションで拡大する速度
+  const float SCALE_SPEED = 0.3f;
+
   //既にGetメソッドが呼ばれた場合true
   bool god;
   bool isEndAnimation;
@@ -49,14 +52,15 @@ public abstract class Item : MonoBehaviour, IItem
           materials.Add(mat);
     }
 
-    //位置アニメーション
+    //位置アニメーション + 拡大アニメーション
     while(startPosY + HIGHT > transform.position.y)
     {
       transform.Translate(Vector3.up * UP_SPEED * Time.deltaTime, Space.World);
+      transform.localScale += Vector3.one * Time.deltaTime * SCALE_SPEED;
       yield return new WaitForEndOfFrame();
     }
 
-    //TODO:透過アニメーション
+    //透過アニメーション
     while(true)
     {
       foreach(var mat in materials)

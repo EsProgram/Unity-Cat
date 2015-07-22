@@ -32,7 +32,7 @@ public class TreasureBoxControl : MonoBehaviour
       alreadyOpend = true;
       if(treasureItem != null)
       {
-        var item = Instantiate<GameObject>(treasureItem);
+        var item = Instantiate(treasureItem, transform.position, Quaternion.identity) as GameObject;
         return item.GetComponent<Item>();
       }
     }
