@@ -58,7 +58,8 @@ public class UnitychanActionControl : MonoBehaviour
           //宝の方向を向いていればGETする
           if(Physics.Linecast(transform.position, transform.position + transform.forward, out hit))
           {
-            if(hit.collider.tag == "Treasure")
+            if(hit.collider.tag == "Treasure"
+              && ReferenceEquals(hit.collider.gameObject, TouchListener.Instance.TouchObject))
             {
               var item = TouchListener.Instance.TouchObject.GetComponent<TreasureBoxControl>().Open();
 
@@ -70,9 +71,8 @@ public class UnitychanActionControl : MonoBehaviour
               }
             }
           }
-          //向いていなければ宝の方向を向く
-          else
-            StartCoroutine(RotateCoroutine());
+          //宝の方向を向く
+          StartCoroutine(RotateCoroutine());
         }
         break;
       case "UnityChan":
