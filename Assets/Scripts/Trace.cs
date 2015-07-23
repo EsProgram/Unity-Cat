@@ -27,12 +27,6 @@ public class Trace : MonoBehaviour
       var dir = Vector3.Lerp(Vector3.zero, traceTarget.position - transform.position, Time.deltaTime);
       transform.position -= dir.normalized * Time.deltaTime * speed;
     }
-
-
-
     transform.LookAt(lookAt);
-
   }
-
-
 }

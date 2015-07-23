@@ -7,14 +7,15 @@ using System.Linq;
 [RequireComponent(typeof(NavMeshAgent), typeof(Animator))]
 public class UnitychanActionControl : MonoBehaviour
 {
+  //宝箱タッチ時の回転動作スピード
   const float ROTATE_SPEED = 10f;
+  //走りアニメーションに遷移する速度ベクトルの大きさ
+  private const float RUN_DECISION = 0.3f;
 
   public bool AllowClickEvent { get; set; }
 
   private NavMeshAgent agent;
   private Animator anim;
-  //走り判定のベクトルの大きさ
-  private const float RUN_DECISION = 0.3f;
 
 
   public UnitychanActionControl()
@@ -43,7 +44,10 @@ public class UnitychanActionControl : MonoBehaviour
       case "Ground":
         //タッチした位置に移動
         if(animState.IsName("Standing@loop") || animState.IsName("Running@loop"))
+        {
+          agent.velocity = Vector3.zero;
           agent.SetDestination(TouchListener.Instance.HitPoint);
+        }
         break;
 
       case "Treasure":
@@ -89,14 +93,18 @@ public class UnitychanActionControl : MonoBehaviour
   }
 
   /// <summary>
-  /// Unityちゃんのアニメーションを更新する
+  /// Unityちゃんの走りアニメーションを更新する
   /// </summary>
-  private void AnimationUpdate()
+  private void RunAnimationUpdate()
   {
     if(agent.velocity.magnitude > RUN_DECISION)
-      anim.SetBool("Run", true);
+    {
+      if(!anim.GetCurrentAnimatorStateInfo(0).IsName("Running@loop"))
+        anim.SetBool("Run", true);
+    }
     else
-      anim.SetBool("Run", false);
+      if(anim.GetCurrentAnimatorStateInfo(0).IsName("Running@loop"))
+        anim.SetBool("Run", false);
   }
 
   private IEnumerator RotateCoroutine()
@@ -114,6 +122,6 @@ public class UnitychanActionControl : MonoBehaviour
 
   public void Update()
   {
-    AnimationUpdate();
+    RunAnimationUpdate();
   }
 }
