@@ -7,6 +7,8 @@ using System.Linq;
 [RequireComponent(typeof(NavMeshAgent), typeof(Animator))]
 public class UnitychanActionControl : MonoBehaviour
 {
+  const float ROTATE_SPEED = 10f;
+
   public bool AllowClickEvent { get; set; }
 
   private NavMeshAgent agent;
@@ -66,15 +68,19 @@ public class UnitychanActionControl : MonoBehaviour
           }
           //向いていなければ宝の方向を向く
           else
-          {
-            //TODO:宝の方向を向く
-            transform.LookAt(TouchListener.Instance.TouchObject.transform);
-          }
+            StartCoroutine(RotateCoroutine());
         }
         break;
       case "UnityChan":
         if(animState.IsName("Standing@loop"))
-          anim.SetTrigger("Touch");
+        {
+          //2通りのアニメーションをそれぞれ確率で発生させる
+          int randValue = UnityEngine.Random.Range(0, 100);
+          if(randValue < 40)
+            anim.SetTrigger("Touch1");
+          else
+            anim.SetTrigger("Touch2");
+        }
         break;
 
       default:
@@ -93,7 +99,17 @@ public class UnitychanActionControl : MonoBehaviour
       anim.SetBool("Run", false);
   }
 
-
+  private IEnumerator RotateCoroutine()
+  {
+    for(int i = 0; i < 60; ++i)
+    {
+      var diff = (TouchListener.Instance.TouchObject.transform.position - transform.position).normalized;
+      //diff.y = 0;
+      diff = Vector3.Lerp(transform.forward, diff, Time.deltaTime * ROTATE_SPEED);
+      transform.rotation = Quaternion.LookRotation(diff);
+      yield return new WaitForEndOfFrame();
+    }
+  }
 
 
   public void Update()
